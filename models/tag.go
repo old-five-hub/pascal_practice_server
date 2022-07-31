@@ -14,7 +14,7 @@ type Tag struct {
 
 func GetTags() ([]*Tag, error) {
 	var tags []*Tag
-	rows, err := Db.Query("select * from language_tag")
+	rows, err := Db.Query("select * from tag")
 
 	defer rows.Close()
 	if err != nil {

@@ -13,7 +13,7 @@ func InitRouter() *gin.Engine {
 	appV1 := r.Group("/app/v1")
 
 	{
-		appV1.GET("/tags", v1.GetTags)
+		appV1.POST("/tags", v1.GetTags)
 	}
 
 	return r
