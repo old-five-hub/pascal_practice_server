@@ -2,11 +2,17 @@ package main
 
 import (
 	"pascal_practice_server/models"
+	"pascal_practice_server/pkg/gredis"
+	"pascal_practice_server/pkg/setting"
+	"pascal_practice_server/pkg/utils"
 	"pascal_practice_server/routers"
 )
 
 func init() {
-	models.InitDb()
+	setting.SetUp()
+	models.SetUp()
+	gredis.SetUp()
+	utils.SetUp()
 }
 
 func main() {

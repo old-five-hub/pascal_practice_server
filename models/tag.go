@@ -10,6 +10,7 @@ type Tag struct {
 	Hot      int
 	CreateAt string
 	UpdateAt string
+	Type     string
 }
 
 func GetTags() ([]*Tag, error) {
@@ -23,7 +24,7 @@ func GetTags() ([]*Tag, error) {
 
 	for rows.Next() {
 		tmp := new(Tag)
-		err := rows.Scan(&tmp.Id, &tmp.Name, &tmp.CreateAt, &tmp.UpdateAt, &tmp.Hot)
+		err := rows.Scan(&tmp.Id, &tmp.Name, &tmp.CreateAt, &tmp.UpdateAt, &tmp.Hot, &tmp.Type)
 		if err != nil {
 			log.Fatal(err)
 		}
