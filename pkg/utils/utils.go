@@ -2,6 +2,6 @@ package utils
 
 import "pascal_practice_server/pkg/setting"
 
-func SetUp() {
+func Setup() {
 	jwtSecret = []byte(setting.AppSetting.JwtSecret)
 }

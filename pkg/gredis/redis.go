@@ -8,7 +8,7 @@ import (
 
 var RedisConn *redis.Pool
 
-func SetUp() error {
+func Setup() error {
 	RedisConn = &redis.Pool{
 		MaxIdle:     setting.RedisSetting.MaxIdle,
 		MaxActive:   setting.RedisSetting.MaxActive,

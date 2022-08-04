@@ -8,6 +8,13 @@ import (
 
 type App struct {
 	JwtSecret string
+
+	RuntimeRootPath string
+
+	LogSavePath string
+	LogSaveName string
+	LogFileExt  string
+	TimeFormat  string
 }
 
 type Database struct {
@@ -33,7 +40,7 @@ var RedisSetting = &Redis{}
 
 var cfg *ini.File
 
-func SetUp() {
+func Setup() {
 	var err error
 	cfg, err = ini.Load("conf/app.ini")
 	if err != nil {

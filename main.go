@@ -9,10 +9,10 @@ import (
 )
 
 func init() {
-	setting.SetUp()
-	models.SetUp()
-	gredis.SetUp()
-	utils.SetUp()
+	setting.Setup()
+	models.Setup()
+	gredis.Setup()
+	utils.Setup()
 }
 
 func main() {
