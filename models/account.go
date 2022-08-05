@@ -6,18 +6,28 @@ type Account struct {
 	ID       int    `gorm:"primary_key" json:"id""`
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
+	Follow   int    `json:"follow"`
 }
 
-func Login(username, password string) (bool, error) {
-	var account Account
-	err := db.Select("id").Where(Account{Username: username, Password: password}).First(&account).Error
+func Login(username, password string) (Account, error) {
+	account := Account{
+		ID:       0,
+		Username: username,
+		Password: password,
+		Nickname: "",
+		Avatar:   "",
+		Follow:   0,
+	}
+	err := db.Select("id, nickname, avatar, follow").Where(Account{Username: username, Password: password}).First(&account).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return false, err
+		return account, err
 	}
 
 	if account.ID > 0 {
-		return true, nil
+		return account, nil
 	}
 
-	return false, nil
+	return account, nil
 }

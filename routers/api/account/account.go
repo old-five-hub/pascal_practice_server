@@ -35,13 +35,13 @@ func Login(c *gin.Context) {
 
 	accountService := account_service.Account{Username: a.Username, Password: utils.EncodeMD5(a.Password)}
 
-	isExist, err := accountService.Login()
+	account, err := accountService.Login()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
 		return
 	}
 
-	if !isExist {
+	if account.ID == 0 {
 		appG.Response(http.StatusUnauthorized, e.ERROR_AUTH, nil)
 		return
 	}
@@ -52,7 +52,10 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
-		"token": token,
+	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
+		"token":    token,
+		"avatar":   account.Avatar,
+		"nickname": account.Nickname,
+		"follow":   account.Follow,
 	})
 }

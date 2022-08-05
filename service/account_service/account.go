@@ -7,6 +7,6 @@ type Account struct {
 	Password string
 }
 
-func (a *Account) Login() (bool, error) {
+func (a *Account) Login() (models.Account, error) {
 	return models.Login(a.Username, a.Password)
 }
