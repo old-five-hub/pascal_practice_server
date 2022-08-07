@@ -18,5 +18,11 @@ func InitRouter() *gin.Engine {
 	{
 	}
 
+	appAccount := r.Group("/api/account")
+	appAccount.Use(jwt.JWT())
+	{
+		appAccount.POST("info", account.Info)
+	}
+
 	return r
 }

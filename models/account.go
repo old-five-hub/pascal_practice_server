@@ -31,3 +31,24 @@ func Login(username, password string) (Account, error) {
 
 	return account, nil
 }
+
+func Info(ID int) (Account, error) {
+	account := Account{
+		ID:       0,
+		Username: "",
+		Password: "",
+		Nickname: "",
+		Avatar:   "",
+		Follow:   0,
+	}
+	err := db.Select("id, nickname, avatar, follow").Where(Account{ID: ID}).First(&account).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return account, err
+	}
+
+	if account.ID > 0 {
+		return account, nil
+	}
+
+	return account, nil
+}

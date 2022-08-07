@@ -10,3 +10,7 @@ type Account struct {
 func (a *Account) Login() (models.Account, error) {
 	return models.Login(a.Username, a.Password)
 }
+
+func Info(ID int) (models.Account, error) {
+	return models.Info(ID)
+}

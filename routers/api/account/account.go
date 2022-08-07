@@ -46,11 +46,13 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := utils.GenerateToken(a.Username, a.Password)
+	token, err := utils.GenerateToken(account.ID, account.Username)
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_AUTH_TOKEN, nil)
 		return
 	}
+
+	appG.C.SetCookie("access-token", token, 3600000000000, "/", "*", false, false)
 
 	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
 		"token":    token,
@@ -58,4 +60,37 @@ func Login(c *gin.Context) {
 		"nickname": account.Nickname,
 		"follow":   account.Follow,
 	})
+}
+
+func Info(c *gin.Context) {
+	appG := app.Gin{C: c}
+	token, err := c.Cookie("access-token")
+	if err != nil {
+		appG.Response(http.StatusUnauthorized, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
+		return
+	}
+	claims, err := utils.ParseToken(token)
+	if err != nil {
+		appG.Response(http.StatusUnauthorized, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
+		return
+	}
+
+	account, err := account_service.Info(claims.UserId)
+
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
+		return
+	}
+
+	if account.ID == 0 {
+		appG.Response(http.StatusUnauthorized, e.ERROR_AUTH, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
+		"avatar":   account.Avatar,
+		"nickname": account.Nickname,
+		"follow":   account.Follow,
+	})
+
 }
