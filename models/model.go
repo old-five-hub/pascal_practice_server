@@ -19,6 +19,7 @@ func Setup() {
 		setting.DatabaseSetting.Name)), &gorm.Config{})
 
 	db.AutoMigrate(&Account{})
+	db.AutoMigrate(&Tag{})
 	if err != nil {
 		log.Fatalf("models.Setup err: %v", err)
 	}

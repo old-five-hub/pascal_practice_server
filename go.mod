@@ -26,6 +26,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.2 // indirect
 	github.com/shiena/ansicolor v0.0.0-20151119151921-a422bbe96644 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
+	github.com/unknwon/com v1.0.1 // indirect
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
 	golang.org/x/net v0.0.0-20220726230323-06994584191e // indirect
 	golang.org/x/sys v0.0.0-20220727055044-e65921a090b8 // indirect
