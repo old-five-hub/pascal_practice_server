@@ -8,10 +8,10 @@ import (
 type Tag struct {
 	Id       int       `json:"id"`
 	Name     string    `json:"name"`
-	Hot      int       `json:"name"`
+	Hot      int       `json:"hot"`
 	CreateAt time.Time `gorm:"autoCreateTime"json:"createAt"`
 	UpdateAt time.Time `gorm:"autoUpdateTime"json:"updateAt"`
-	Deleted  int       `json:"deleted"`
+	Deleted  int       `default:"0"json:"deleted"`
 }
 
 func GetAllTags() ([]Tag, error) {
@@ -71,4 +71,26 @@ func ExistTagById(id int) (bool, error) {
 		return true, nil
 	}
 	return false, nil
+}
+
+func ExistTagByIds(ids []int) (bool, error) {
+	var tags []Tag
+	err := db.Select("id").Where("id in (?) And deleted = 0", ids).Find(&tags).Error
+	if err != nil {
+		return false, err
+	}
+	if len(tags) == len(ids) {
+		return true, nil
+	}
+	return false, nil
+}
+
+func GetTagByIds(ids []int) ([]Tag, error) {
+	var tags []Tag
+	err := db.Select("id").Where("id in (?) And deleted = 0", ids).Find(&tags).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return tags, nil
 }

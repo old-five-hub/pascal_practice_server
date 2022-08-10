@@ -20,6 +20,7 @@ func Setup() {
 
 	db.AutoMigrate(&Account{})
 	db.AutoMigrate(&Tag{})
+	db.AutoMigrate(&Question{})
 	if err != nil {
 		log.Fatalf("models.Setup err: %v", err)
 	}

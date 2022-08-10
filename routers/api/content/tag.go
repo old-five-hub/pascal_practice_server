@@ -24,16 +24,19 @@ func GetAllTags(c *gin.Context) {
 }
 
 type CreateTagForm struct {
-	Name string `form:"name" valid:"required;MaxSize(100)"`
-	Hot  int    `form:"hot" valid:"Range(0,1)"`
+	Name string `form:"name" valid:"MaxSize(100)"`
+	Hot  int    `form:"hot" valid:"Range(0, 1)"`
 }
 
 func CreateTag(c *gin.Context) {
 	var (
 		appG = app.Gin{C: c}
-		form CreateTagForm
+		form = CreateTagForm{}
 	)
-	httpCode, errCode := app.BindAndValid(c, &form)
+
+	c.BindJSON(&form)
+
+	httpCode, errCode := app.Valid(form)
 	if errCode != e.SUCCESS {
 		appG.Response(httpCode, errCode, nil)
 		return
@@ -47,8 +50,20 @@ func CreateTag(c *gin.Context) {
 		appG.Response(http.StatusOK, e.ERROR_EXIST_TAG, nil)
 		return
 	}
+	tag := content_service.Tag{
+		Name: form.Name,
+		Hot:  form.Hot,
+	}
 
-	appG.Response(http.StatusInternalServerError, e.ERROR_ADD_TAG_FAIL, nil)
+	err = content_service.CreateTag(&tag)
+
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_ADD_TAG_FAIL, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
+
 }
 
 type UpdateTagForm struct {
@@ -63,7 +78,9 @@ func UpdateTag(c *gin.Context) {
 		form UpdateTagForm
 	)
 
-	httpCode, errCode := app.BindAndValid(c, &form)
+	c.BindJSON(&form)
+
+	httpCode, errCode := app.Valid(form)
 	if errCode != e.SUCCESS {
 		appG.Response(httpCode, errCode, nil)
 		return
