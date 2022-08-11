@@ -1,6 +1,11 @@
 package content_service
 
-type CreateQuestionForm struct {
-	Name   string `form:"name" valid:"required;MaxSize(100)"`
-	TagIds []int  `form:"tagIds"`
+import "pascal_practice_server/models"
+
+func CreateQuestion(name string, tags []models.Tag) error {
+	return models.CreateQuestion(name, tags)
+}
+
+func GetQuestionList(tagIds []int, page, limit int) (models.QuestionListResult, error) {
+	return models.GetQuestionList(tagIds, page, limit)
 }

@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type Question struct {
 	Id       int       `json:"id"`
@@ -17,4 +19,40 @@ func CreateQuestion(name string, tags []Tag) error {
 		Tags: tags,
 	}
 	return db.Create(&question).Error
+}
+
+type QuestionListResult struct {
+	List    []Question
+	Total   int64
+	HasMore bool
+}
+
+func GetQuestionList(tagIds []int, page, limit int) (QuestionListResult, error) {
+	var questions []Question
+	var total int64
+	var hasMore bool
+
+	err := db.Model(&Question{}).Where("id IN (SELECT question_id FROM question_tag where tag_id in (?))", tagIds).Count(&total).Error
+
+	if err != nil {
+		return QuestionListResult{}, err
+	}
+
+	err = db.Preload("Tags").
+		Where("id IN (SELECT question_id FROM question_tag where tag_id in (?))", tagIds).
+		Offset(page).
+		Limit(limit).
+		Find(&questions).Error
+
+	if err != nil {
+		return QuestionListResult{}, err
+	}
+
+	hasMore = limit*page < int(total)
+
+	return QuestionListResult{
+		List:    questions,
+		Total:   total,
+		HasMore: hasMore,
+	}, nil
 }

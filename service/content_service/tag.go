@@ -39,3 +39,7 @@ func ExistTagById(id int) (bool, error) {
 func ExistTagByIds(ids []int) (bool, error) {
 	return models.ExistTagByIds(ids)
 }
+
+func GetTagByIds(ids []int) ([]models.Tag, error) {
+	return models.GetTagByIds(ids)
+}

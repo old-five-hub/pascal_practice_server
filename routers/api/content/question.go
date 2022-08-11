@@ -3,9 +3,9 @@ package content
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"pascal_practice_server/models"
 	"pascal_practice_server/pkg/app"
 	"pascal_practice_server/pkg/e"
+	"pascal_practice_server/service/content_service"
 )
 
 type CreateQuestionForm struct {
@@ -27,7 +27,7 @@ func CreateQuestion(c *gin.Context) {
 		return
 	}
 
-	tags, err := models.GetTagByIds(form.TagIds)
+	tags, err := content_service.GetTagByIds(form.TagIds)
 	if len(tags) == 0 {
 		appG.Response(http.StatusBadRequest, e.ERROR_NOT_EXIST_TAG, nil)
 		return
@@ -38,11 +38,48 @@ func CreateQuestion(c *gin.Context) {
 		return
 	}
 
-	err = models.CreateQuestion(form.Name, tags)
+	err = content_service.CreateQuestion(form.Name, tags)
 
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_CREATE_QUESTION_FAIL, nil)
 	}
 
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}
+
+type GetQuestionForm struct {
+	TagIds []int `form:"tagIds" valid:"Required"`
+	Page   int   `form:"page" valid:"Required"`
+	Limit  int   `form:"page" valid:"Required"`
+}
+
+func GetQuestionList(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form = GetQuestionForm{}
+	)
+
+	c.BindJSON(&form)
+
+	httpCode, errCode := app.Valid(&form)
+
+	if httpCode != e.SUCCESS {
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	result, err := content_service.GetQuestionList(form.TagIds, form.Page, form.Limit)
+
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_GET_QUESTION_FAIL, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
+		"list":    &result.List,
+		"total":   &result.Total,
+		"page":    form.Page,
+		"limit":   form.Limit,
+		"hasMore": &result.HasMore,
+	})
 }
