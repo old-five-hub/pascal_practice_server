@@ -48,7 +48,7 @@ func CreateQuestion(c *gin.Context) {
 }
 
 type GetQuestionForm struct {
-	TagIds []int `form:"tagIds" valid:"Required"`
+	TagIds []int `form:"tagIds"`
 	Page   int   `form:"page" valid:"Required"`
 	Limit  int   `form:"page" valid:"Required"`
 }

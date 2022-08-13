@@ -31,18 +31,32 @@ func GetQuestionList(tagIds []int, page, limit int) (QuestionListResult, error) 
 	var questions []Question
 	var total int64
 	var hasMore bool
+	var err error
 
-	err := db.Model(&Question{}).Where("id IN (SELECT question_id FROM question_tag where tag_id in (?))", tagIds).Count(&total).Error
+	if len(tagIds) > 0 {
+		err = db.Model(&Question{}).Where("id IN (SELECT question_id FROM question_tag where tag_id in (?))", tagIds).Count(&total).Error
 
-	if err != nil {
-		return QuestionListResult{}, err
+		if err != nil {
+			return QuestionListResult{}, err
+		}
+
+		err = db.Preload("Tags").
+			Where("id IN (SELECT question_id FROM question_tag where tag_id in (?))", tagIds).
+			Offset((page - 1) * limit).
+			Limit(limit).
+			Find(&questions).Error
+	} else {
+		err = db.Model(&Question{}).Count(&total).Error
+
+		if err != nil {
+			return QuestionListResult{}, err
+		}
+
+		err = db.Preload("Tags").
+			Offset((page - 1) * limit).
+			Limit(limit).
+			Find(&questions).Error
 	}
-
-	err = db.Preload("Tags").
-		Where("id IN (SELECT question_id FROM question_tag where tag_id in (?))", tagIds).
-		Offset(page).
-		Limit(limit).
-		Find(&questions).Error
 
 	if err != nil {
 		return QuestionListResult{}, err

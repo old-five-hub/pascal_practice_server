@@ -9,6 +9,7 @@ type Tag struct {
 	Id       int       `json:"id"`
 	Name     string    `json:"name"`
 	Hot      int       `json:"hot"`
+	Icon     string    `json:"icon"`
 	CreateAt time.Time `gorm:"autoCreateTime"json:"createAt"`
 	UpdateAt time.Time `gorm:"autoUpdateTime"json:"updateAt"`
 	Deleted  int       `default:"0"json:"deleted"`
@@ -24,10 +25,11 @@ func GetAllTags() ([]Tag, error) {
 	return tags, nil
 }
 
-func CreateTag(name string, hot int) error {
+func CreateTag(name string, hot int, icon string) error {
 	tag := Tag{
 		Name: name,
 		Hot:  hot,
+		Icon: icon,
 	}
 	if err := db.Create(&tag).Error; err != nil {
 		return err

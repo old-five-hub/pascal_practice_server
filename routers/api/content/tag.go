@@ -26,6 +26,7 @@ func GetAllTags(c *gin.Context) {
 type CreateTagForm struct {
 	Name string `form:"name" valid:"MaxSize(100)"`
 	Hot  int    `form:"hot" valid:"Range(0, 1)"`
+	Icon string `form:"icon" valid:"Required"`
 }
 
 func CreateTag(c *gin.Context) {
@@ -69,6 +70,7 @@ func CreateTag(c *gin.Context) {
 type UpdateTagForm struct {
 	Name string `form:"name" valid:"required;MaxSize(100)"`
 	Hot  int    `form:"hot" valid:"Range(0,1)"`
+	Icon string `form:"icon" valid:"Required"`
 	Id   int    `form:"id"`
 }
 
@@ -90,6 +92,7 @@ func UpdateTag(c *gin.Context) {
 		Id:   form.Id,
 		Name: form.Name,
 		Hot:  form.Hot,
+		Icon: form.Icon,
 	}
 
 	exists, err := content_service.ExistTagById(tag.Id)

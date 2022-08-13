@@ -6,6 +6,7 @@ type Tag struct {
 	Id   int
 	Name string
 	Hot  int
+	Icon string
 }
 
 func GetAllTags() ([]models.Tag, error) {
@@ -17,7 +18,7 @@ func GetAllTags() ([]models.Tag, error) {
 }
 
 func CreateTag(t *Tag) error {
-	return models.CreateTag(t.Name, t.Hot)
+	return models.CreateTag(t.Name, t.Hot, t.Icon)
 }
 
 func UpdateTag(t *Tag) error {
