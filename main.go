@@ -2,6 +2,7 @@ package main
 
 import (
 	"pascal_practice_server/models"
+	"pascal_practice_server/pkg/cos"
 	"pascal_practice_server/pkg/gredis"
 	"pascal_practice_server/pkg/setting"
 	"pascal_practice_server/pkg/utils"
@@ -12,6 +13,7 @@ func init() {
 	setting.Setup()
 	models.Setup()
 	gredis.Setup()
+	cos.SetUp()
 	utils.Setup()
 }
 

@@ -9,6 +9,7 @@ import (
 	"pascal_practice_server/pkg/e"
 	"pascal_practice_server/pkg/utils"
 	"pascal_practice_server/service/account_service"
+	"time"
 )
 
 type account struct {
@@ -52,7 +53,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	appG.C.SetCookie("access-token", token, 3600000000000, "/", "*", false, false)
+	appG.C.SetCookie("access-token", token, int(time.Hour*24), "/", "*", false, false)
 
 	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
 		"token":    token,

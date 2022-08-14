@@ -5,6 +5,7 @@ import (
 	"pascal_practice_server/middleware/jwt"
 	"pascal_practice_server/routers/api/account"
 	"pascal_practice_server/routers/api/content"
+	"pascal_practice_server/routers/api/file"
 )
 
 func InitRouter() *gin.Engine {
@@ -29,6 +30,12 @@ func InitRouter() *gin.Engine {
 	appAccount.Use(jwt.JWT())
 	{
 		appAccount.POST("info", account.Info)
+	}
+
+	appFile := r.Group("/api/file")
+	appFile.Use(jwt.JWT())
+	{
+		appFile.POST("upload", file.UploadFile)
 	}
 
 	return r

@@ -34,15 +34,22 @@ type Redis struct {
 	IdleTimeout time.Duration
 }
 
+type Tencent struct {
+	SecretId  string
+	SecretKey string
+	CosUrl    string
+}
+
 var AppSetting = &App{}
 var DatabaseSetting = &Database{}
 var RedisSetting = &Redis{}
+var TencentSetting = &Tencent{}
 
 var cfg *ini.File
 
 func Setup() {
 	var err error
-	cfg, err = ini.Load("conf/app.ini")
+	cfg, err = ini.Load("conf/app.ini", "conf/dev.ini")
 	if err != nil {
 		log.Fatalf("setting.SetUp, fail to parse 'conf/app.ini': %v", err)
 	}
@@ -50,6 +57,7 @@ func Setup() {
 	mapTo("app", AppSetting)
 	mapTo("database", DatabaseSetting)
 	mapTo("redis", RedisSetting)
+	mapTo("tencent", TencentSetting)
 }
 
 // mapTo map section

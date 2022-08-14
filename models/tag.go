@@ -6,23 +6,37 @@ import (
 )
 
 type Tag struct {
-	Id       int       `json:"id"`
-	Name     string    `json:"name"`
-	Hot      int       `json:"hot"`
-	Icon     string    `json:"icon"`
-	CreateAt time.Time `gorm:"autoCreateTime"json:"createAt"`
-	UpdateAt time.Time `gorm:"autoUpdateTime"json:"updateAt"`
-	Deleted  int       `default:"0"json:"deleted"`
+	Id        int        `json:"id"`
+	Name      string     `json:"name"`
+	Hot       int        `json:"hot"`
+	Icon      string     `json:"icon"`
+	CreateAt  time.Time  `gorm:"autoCreateTime"json:"createAt"`
+	UpdateAt  time.Time  `gorm:"autoUpdateTime"json:"updateAt"`
+	Deleted   int        `default:"0"json:"deleted"`
+	Questions []Question `gorm:"many2many:question_tag"json:"questions"`
 }
 
-func GetAllTags() ([]Tag, error) {
+type CountTag struct {
+	Tag
+	Count int `json:"count"`
+}
+
+func GetAllTags() ([]CountTag, error) {
 	var tags []Tag
+	var countTags []CountTag
 	result := db.Find(&tags)
+
+	for _, v := range tags {
+		countTags = append(countTags, CountTag{
+			v,
+			int(db.Model(&v).Association("Questions").Count()),
+		})
+	}
 
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return tags, nil
+	return countTags, nil
 }
 
 func CreateTag(name string, hot int, icon string) error {

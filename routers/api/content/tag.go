@@ -16,6 +16,7 @@ func GetAllTags(c *gin.Context) {
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_GET_TAGS_FAIL, nil)
 	}
+
 	count := len(tags)
 	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
 		"lists": tags,

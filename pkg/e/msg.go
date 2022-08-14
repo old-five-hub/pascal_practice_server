@@ -15,6 +15,9 @@ var MsgFlags = map[int]string{
 	ERROR_ADD_TAG_FAIL:             "新增标签失败",
 	ERROR_EDIT_TAG_FAIL:            "修改标签失败",
 	ERROR_DELETE_TAG_FAIL:          "删除标签失败",
+
+	ERROR_UPLOAD_FILE:             "上传文件失败",
+	ERROR_UPLOAD_FILE_UNKNOW_TYPE: "请传入正确的文件类型",
 }
 
 func GetMsg(code int) string {

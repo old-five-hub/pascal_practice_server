@@ -9,7 +9,7 @@ type Tag struct {
 	Icon string
 }
 
-func GetAllTags() ([]models.Tag, error) {
+func GetAllTags() ([]models.CountTag, error) {
 	tags, err := models.GetAllTags()
 	if err != nil {
 		return nil, err
