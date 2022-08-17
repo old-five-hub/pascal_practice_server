@@ -8,6 +8,8 @@ type Question struct {
 	Id       int       `json:"id"`
 	Name     string    `json:"name"`
 	Tags     []Tag     `gorm:"many2many:question_tag"json:"tags"`
+	Desc     string    `json:"desc"`
+	Answer   string    `json:"answer"`
 	CreateAt time.Time `gorm:"autoCreateTime"json:"createAt"`
 	UpdateAt time.Time `gorm:"autoUpdateTime"json:"updateAt"`
 	Deleted  int       `default:"0"json:"deleted"`
@@ -69,4 +71,16 @@ func GetQuestionList(tagIds []int, page, limit int) (QuestionListResult, error) 
 		Total:   total,
 		HasMore: hasMore,
 	}, nil
+}
+
+func GetQuestionInfo(id int) (Question, error) {
+	question := Question{
+		Id: id,
+	}
+	err := db.Preload("Tags").First(&question).Error
+	if err != nil {
+		return question, err
+	}
+
+	return question, nil
 }

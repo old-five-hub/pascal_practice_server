@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"pascal_practice_server/pkg/app"
 	"pascal_practice_server/pkg/e"
+	"pascal_practice_server/routers/api/file"
 	"pascal_practice_server/service/content_service"
 )
 
@@ -82,4 +83,41 @@ func GetQuestionList(c *gin.Context) {
 		"limit":   form.Limit,
 		"hasMore": &result.HasMore,
 	})
+}
+
+type GetQuestionInfoForm struct {
+	Id int `form:"id"valid:"Required"`
+}
+
+func GetQuestionInfo(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form = GetQuestionInfoForm{}
+	)
+
+	c.BindJSON(&form)
+
+	httpCode, errCode := app.Valid(&form)
+
+	if httpCode != e.SUCCESS {
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	result, err := content_service.GetQuestionInfo(form.Id)
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_GET_QUESION_DETAIL_FAIL, nil)
+		return
+	}
+
+	answer, err := file.GetFileContent(result.Answer, "question")
+
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_GET_QUESION_DETAIL_FAIL, nil)
+		return
+	}
+
+	result.Answer = answer
+
+	appG.Response(http.StatusOK, e.SUCCESS, result)
 }

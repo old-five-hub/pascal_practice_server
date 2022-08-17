@@ -9,3 +9,7 @@ func CreateQuestion(name string, tags []models.Tag) error {
 func GetQuestionList(tagIds []int, page, limit int) (models.QuestionListResult, error) {
 	return models.GetQuestionList(tagIds, page, limit)
 }
+
+func GetQuestionInfo(id int) (models.Question, error) {
+	return models.GetQuestionInfo(id)
+}

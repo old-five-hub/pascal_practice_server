@@ -3,10 +3,12 @@ package file
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"net/http"
 	"pascal_practice_server/pkg/app"
 	"pascal_practice_server/pkg/cos"
 	"pascal_practice_server/pkg/e"
+	"pascal_practice_server/pkg/setting"
 	path2 "path"
 )
 
@@ -41,6 +43,22 @@ func UploadFile(c *gin.Context) {
 	}
 
 	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
-		path: path,
+		"uri": path,
 	})
+}
+
+func GetFileContent(path string, dir string) (string, error) {
+	url := fmt.Sprintf("%s/%s/%s", setting.TencentSetting.CosUrl, dir, path)
+
+	fmt.Println(url)
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%s", body), nil
 }
