@@ -1,14 +1,20 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type Account struct {
-	ID       int    `gorm:"primary_key" json:"id""`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Nickname string `json:"nickname"`
-	Avatar   string `json:"avatar"`
-	Follow   int    `json:"follow"`
+	ID       int       `gorm:"primary_key" json:"id""`
+	Username string    `json:"username"`
+	Password string    `json:"password"`
+	Nickname string    `json:"nickname"`
+	Avatar   string    `json:"avatar"`
+	Follow   int       `json:"follow"`
+	CreateAt time.Time `gorm:"autoCreateTime"json:"createAt"`
+	UpdateAt time.Time `gorm:"autoUpdateTime"json:"updateAt"`
+	Deleted  int       `default:"0"json:"deleted"`
 }
 
 func Login(username, password string) (Account, error) {
@@ -32,6 +38,7 @@ func Login(username, password string) (Account, error) {
 	return account, nil
 }
 
+//TODO: 使用token获取信息
 func Info(ID int) (Account, error) {
 	account := Account{
 		ID:       0,

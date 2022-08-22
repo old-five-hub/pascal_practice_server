@@ -6,14 +6,14 @@ import (
 )
 
 type Tag struct {
-	Id        int        `json:"id"`
+	Id        int        `gorm:"primary_key"json:"id"`
 	Name      string     `json:"name"`
 	Hot       int        `json:"hot"`
 	Icon      string     `json:"icon"`
+	Questions []Question `gorm:"many2many:question_tag"json:"questions"`
 	CreateAt  time.Time  `gorm:"autoCreateTime"json:"createAt"`
 	UpdateAt  time.Time  `gorm:"autoUpdateTime"json:"updateAt"`
 	Deleted   int        `default:"0"json:"deleted"`
-	Questions []Question `gorm:"many2many:question_tag"json:"questions"`
 }
 
 type CountTag struct {

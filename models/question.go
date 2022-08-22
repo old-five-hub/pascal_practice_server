@@ -5,9 +5,10 @@ import (
 )
 
 type Question struct {
-	Id       int       `json:"id"`
+	Id       int       `gorm:"primary_key"json:"id"`
 	Name     string    `json:"name"`
 	Tags     []Tag     `gorm:"many2many:question_tag"json:"tags"`
+	Comments []Comment `json:"comments"`
 	Desc     string    `json:"desc"`
 	Answer   string    `json:"answer"`
 	CreateAt time.Time `gorm:"autoCreateTime"json:"createAt"`
