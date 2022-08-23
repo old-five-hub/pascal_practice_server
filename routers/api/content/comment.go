@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"pascal_practice_server/pkg/app"
 	"pascal_practice_server/pkg/e"
+	"pascal_practice_server/pkg/utils"
 	"pascal_practice_server/service/content_service"
 )
 
@@ -39,9 +40,9 @@ func GetComments(c *gin.Context) {
 }
 
 type CreateCommentForm struct {
-	QuestionId int    `form:"questionId"valid:"Required"`
-	Content    string `json:"content"valid:"Required"`
-	ParentId   string `json:"parentId"`
+	QuestionId int    `form:"questionId" valid:"Required"`
+	Content    string `form:"content" valid:"Required"`
+	ParentId   int    `form:"parentId"`
 }
 
 func CreateComment(c *gin.Context) {
@@ -58,10 +59,22 @@ func CreateComment(c *gin.Context) {
 		return
 	}
 
-	err := content_service.CreateComment(map[string]interface{}{
+	token, err := c.Cookie("access-token")
+	if err != nil {
+		appG.Response(http.StatusUnauthorized, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
+		return
+	}
+	claims, err := utils.ParseToken(token)
+	if err != nil {
+		appG.Response(http.StatusUnauthorized, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
+		return
+	}
+
+	err = content_service.CreateComment(map[string]interface{}{
 		"questionId": form.QuestionId,
-		"Content":    form.Content,
-		"ParentId":   form.ParentId,
+		"content":    form.Content,
+		"parentId":   form.ParentId,
+		"authorId":   claims.UserId,
 	})
 
 	if err != nil {

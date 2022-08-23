@@ -34,12 +34,15 @@ func CreateComment(data map[string]interface{}) error {
 	question := Question{
 		Id: data["questionId"].(int),
 	}
+
 	comment := Comment{
 		QuestionID: data["questionId"].(int),
 		Content:    data["content"].(string),
 		ParentID:   data["parentId"].(int),
+		AuthorID:   data["authorId"].(int),
 	}
-	err := db.Model(&question).Association("Comments").Append(comment)
+
+	err := db.Model(&question).Association("Comments").Append(&comment)
 
 	if err != nil {
 		return err
