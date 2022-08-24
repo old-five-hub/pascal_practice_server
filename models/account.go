@@ -7,7 +7,7 @@ import (
 
 type Account struct {
 	ID       int       `gorm:"primary_key" json:"id""`
-	Username string    `json:"username"`
+	Username string    `gorm:"unique"json:"username"`
 	Password string    `json:"password"`
 	Nickname string    `json:"nickname"`
 	Avatar   string    `json:"avatar"`
@@ -38,7 +38,6 @@ func Login(username, password string) (Account, error) {
 	return account, nil
 }
 
-//TODO: 使用token获取信息
 func Info(ID int) (Account, error) {
 	account := Account{
 		ID:       0,

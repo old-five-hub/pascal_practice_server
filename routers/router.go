@@ -27,6 +27,7 @@ func InitRouter() *gin.Engine {
 		appContent.POST("question/info", content.GetQuestionInfo)
 		appContent.POST("comment/list", content.GetComments)
 		appContent.POST("comment/create", content.CreateComment)
+		appContent.POST("like/update", content.UpdateLike)
 	}
 
 	appAccount := r.Group("/api/account")

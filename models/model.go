@@ -22,6 +22,12 @@ func Setup() {
 	db.AutoMigrate(&Tag{})
 	db.AutoMigrate(&Question{})
 	db.AutoMigrate(&Comment{})
+	err = db.AutoMigrate(&UserLike{})
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	db.AutoMigrate(&UserLikeStat{})
 
 	if err != nil {
 		log.Fatalf("models.Setup err: %v", err)
