@@ -1,6 +1,7 @@
 package content
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"pascal_practice_server/pkg/app"
@@ -48,6 +49,8 @@ func UpdateLike(c *gin.Context) {
 	}
 
 	existUserLike, err := content_service.ExistUserLike(userLikeData)
+
+	fmt.Println(existUserLike.LikeStatus, form.LikeStatus)
 
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR, nil)

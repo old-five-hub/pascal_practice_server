@@ -25,3 +25,7 @@ func ExistUserLikeStat(data map[string]interface{}) (models.UserLikeStat, error)
 func CreateUserLikeStat(data map[string]interface{}) error {
 	return models.CreateUserLikeStat(data)
 }
+
+func GetUserLikeCount(data map[string]interface{}) (int, error) {
+	return models.GetUserLikeCount(data)
+}

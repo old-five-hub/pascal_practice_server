@@ -105,3 +105,11 @@ func ExistUserLikeStat(data map[string]interface{}) (UserLikeStat, error) {
 
 	return existResult, nil
 }
+
+func GetUserLikeCount(data map[string]interface{}) (int, error) {
+	userLikeStat, err := ExistUserLikeStat(data)
+	if err != nil {
+		return 0, err
+	}
+	return userLikeStat.LikeCount, nil
+}

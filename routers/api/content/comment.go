@@ -3,6 +3,7 @@ package content
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"pascal_practice_server/models"
 	"pascal_practice_server/pkg/app"
 	"pascal_practice_server/pkg/e"
 	"pascal_practice_server/pkg/utils"
@@ -11,6 +12,11 @@ import (
 
 type GetCommentsForm struct {
 	QuestionId int `form:"questionId"valid:"Required"`
+}
+
+type GetCommentResultItem struct {
+	models.Comment
+	LikeCount int `json:"likeCount"`
 }
 
 func GetComments(c *gin.Context) {
@@ -27,6 +33,7 @@ func GetComments(c *gin.Context) {
 		return
 	}
 
+	var commentsResult []GetCommentResultItem
 	comments, err := content_service.GetComments(form.QuestionId)
 
 	if err != nil {
@@ -34,8 +41,24 @@ func GetComments(c *gin.Context) {
 		return
 	}
 
+	for _, value := range comments {
+		likeCount, err := content_service.GetUserLikeCount(map[string]interface{}{
+			"typeId":   value.ID,
+			"likeType": models.LikeComment,
+		})
+		if err != nil {
+			appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+			return
+		}
+
+		commentsResult = append(commentsResult, GetCommentResultItem{
+			value,
+			likeCount,
+		})
+	}
+
 	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
-		"comments": comments,
+		"comments": commentsResult,
 	})
 }
 

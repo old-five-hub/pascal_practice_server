@@ -3,6 +3,7 @@ package content
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"pascal_practice_server/models"
 	"pascal_practice_server/pkg/app"
 	"pascal_practice_server/pkg/e"
 	"pascal_practice_server/routers/api/file"
@@ -119,5 +120,17 @@ func GetQuestionInfo(c *gin.Context) {
 
 	result.Answer = answer
 
-	appG.Response(http.StatusOK, e.SUCCESS, result)
+	likeCount, err := content_service.GetUserLikeCount(map[string]interface{}{
+		"typeId":   form.Id,
+		"likeType": models.LikeQuestion,
+	})
+
+	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
+		"id":        result.Id,
+		"answer":    result.Answer,
+		"name":      result.Name,
+		"tags":      result.Tags,
+		"desc":      result.Desc,
+		"likeCount": likeCount,
+	})
 }
