@@ -113,3 +113,23 @@ func GetUserLikeCount(data map[string]interface{}) (int, error) {
 	}
 	return userLikeStat.LikeCount, nil
 }
+
+func GetUserLiked(data map[string]interface{}) (bool, error) {
+	userLike := &UserLike{
+		TypeID:    data["typeId"].(int),
+		LikeType:  data["likeType"].(int),
+		AccountID: data["accountId"].(int),
+	}
+
+	existResult := UserLike{}
+
+	err := db.Where("type_id = ? AND like_type = ? AND account_id = ?", userLike.TypeID, userLike.LikeType, userLike.AccountID).Find(&existResult).Error
+
+	if err != nil {
+		return false, err
+	}
+
+	liked := existResult.LikeStatus == 1
+
+	return liked, err
+}

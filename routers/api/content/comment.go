@@ -16,7 +16,8 @@ type GetCommentsForm struct {
 
 type GetCommentResultItem struct {
 	models.Comment
-	LikeCount int `json:"likeCount"`
+	LikeCount int  `json:"likeCount"`
+	Liked     bool `json:"liked"`
 }
 
 func GetComments(c *gin.Context) {
@@ -41,6 +42,17 @@ func GetComments(c *gin.Context) {
 		return
 	}
 
+	token, err := c.Cookie("access-token")
+	if err != nil {
+		appG.Response(http.StatusUnauthorized, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
+		return
+	}
+	claims, err := utils.ParseToken(token)
+	if err != nil {
+		appG.Response(http.StatusUnauthorized, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
+		return
+	}
+
 	for _, value := range comments {
 		likeCount, err := content_service.GetUserLikeCount(map[string]interface{}{
 			"typeId":   value.ID,
@@ -51,9 +63,16 @@ func GetComments(c *gin.Context) {
 			return
 		}
 
+		liked, err := content_service.GetUserLiked(map[string]interface{}{
+			"typeId":    value.ID,
+			"likeType":  models.LikeComment,
+			"accountId": claims.UserId,
+		})
+
 		commentsResult = append(commentsResult, GetCommentResultItem{
 			value,
 			likeCount,
+			liked,
 		})
 	}
 

@@ -6,6 +6,7 @@ import (
 	"pascal_practice_server/models"
 	"pascal_practice_server/pkg/app"
 	"pascal_practice_server/pkg/e"
+	"pascal_practice_server/pkg/utils"
 	"pascal_practice_server/routers/api/file"
 	"pascal_practice_server/service/content_service"
 )
@@ -125,6 +126,28 @@ func GetQuestionInfo(c *gin.Context) {
 		"likeType": models.LikeQuestion,
 	})
 
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	token, err := c.Cookie("access-token")
+	if err != nil {
+		appG.Response(http.StatusUnauthorized, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
+		return
+	}
+	claims, err := utils.ParseToken(token)
+	if err != nil {
+		appG.Response(http.StatusUnauthorized, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
+		return
+	}
+
+	liked, err := content_service.GetUserLiked(map[string]interface{}{
+		"typeId":    form.Id,
+		"likeType":  models.LikeQuestion,
+		"accountId": claims.UserId,
+	})
+
 	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
 		"id":        result.Id,
 		"answer":    result.Answer,
@@ -132,5 +155,6 @@ func GetQuestionInfo(c *gin.Context) {
 		"tags":      result.Tags,
 		"desc":      result.Desc,
 		"likeCount": likeCount,
+		"liked":     liked,
 	})
 }
