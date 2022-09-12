@@ -1,9 +1,8 @@
 package content
 
 import (
-	"github.com/astaxie/beego/validation"
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/unknwon/com"
 	"net/http"
 	"pascal_practice_server/pkg/app"
 	"pascal_practice_server/pkg/e"
@@ -55,6 +54,7 @@ func CreateTag(c *gin.Context) {
 	tag := content_service.Tag{
 		Name: form.Name,
 		Hot:  form.Hot,
+		Icon: form.Icon,
 	}
 
 	err = content_service.CreateTag(&tag)
@@ -69,10 +69,10 @@ func CreateTag(c *gin.Context) {
 }
 
 type UpdateTagForm struct {
-	Name string `form:"name" valid:"required;MaxSize(100)"`
+	Name string `form:"name" valid:"Required;MaxSize(100)"`
 	Hot  int    `form:"hot" valid:"Range(0,1)"`
 	Icon string `form:"icon" valid:"Required"`
-	Id   int    `form:"id"`
+	Id   int    `form:"id" valid:"Required"`
 }
 
 func UpdateTag(c *gin.Context) {
@@ -84,6 +84,7 @@ func UpdateTag(c *gin.Context) {
 	c.BindJSON(&form)
 
 	httpCode, errCode := app.Valid(form)
+
 	if errCode != e.SUCCESS {
 		appG.Response(httpCode, errCode, nil)
 		return
@@ -101,11 +102,12 @@ func UpdateTag(c *gin.Context) {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_TAG_FAIL, nil)
 		return
 	}
-	if exists {
-		appG.Response(http.StatusOK, e.ERROR_EXIST_TAG, nil)
+	if !exists {
+		appG.Response(http.StatusOK, e.ERROR_EXIST_TAG_FAIL, nil)
 		return
 	}
 	err = content_service.UpdateTag(&tag)
+
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EDIT_TAG_FAIL, nil)
 		return
@@ -113,19 +115,29 @@ func UpdateTag(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
-func DeleteTag(c *gin.Context) {
-	appG := app.Gin{C: c}
-	valid := validation.Validation{}
-	id := com.StrTo(c.Param("id")).MustInt()
-	valid.Min(id, 1, "id").Message("ID必须大于0")
+type DeleteTagForm struct {
+	Id int `form:"id" valid:"Required"`
+}
 
-	if valid.HasErrors() {
-		app.MarkErrors(valid.Errors)
-		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
+func DeleteTag(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form DeleteTagForm
+	)
+
+	c.BindJSON(&form)
+
+	httpCode, errCode := app.Valid(form)
+
+	if errCode != e.SUCCESS {
+		appG.Response(httpCode, errCode, nil)
+		return
 	}
 
-	tag := content_service.Tag{Id: id}
-	exists, err := content_service.ExistTagById(id)
+	exists, err := content_service.ExistTagById(form.Id)
+
+	fmt.Println(exists)
+
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_TAG_FAIL, nil)
 		return
@@ -136,7 +148,7 @@ func DeleteTag(c *gin.Context) {
 		return
 	}
 
-	if err := content_service.DeleteTag(tag.Id); err != nil {
+	if err := content_service.DeleteTag(form.Id); err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_DELETE_TAG_FAIL, nil)
 		return
 	}

@@ -28,8 +28,6 @@ func UploadFile(c *gin.Context) {
 	ext := path2.Ext(header.Filename)
 	cosType := appG.C.PostForm("cosType")
 
-	fmt.Println(cosType)
-
 	if cosType == "" || (cosType != Image && cosType != Question) {
 		appG.Response(http.StatusBadRequest, e.ERROR_UPLOAD_FILE_UNKNOW_TYPE, nil)
 		return

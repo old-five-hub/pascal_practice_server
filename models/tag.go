@@ -24,7 +24,7 @@ type CountTag struct {
 func GetAllTags() ([]CountTag, error) {
 	var tags []Tag
 	var countTags []CountTag
-	result := db.Find(&tags)
+	result := db.Where("deleted != 1").Find(&tags)
 
 	for _, v := range tags {
 		countTags = append(countTags, CountTag{
@@ -52,7 +52,7 @@ func CreateTag(name string, hot int, icon string) error {
 }
 
 func DeleteTag(id int) error {
-	if err := db.Model(&Tag{}).Where("id = ?", id).Update("delete", 1).Error; err != nil {
+	if err := db.Model(&Tag{}).Where("id = ?", id).Update("deleted", 1).Error; err != nil {
 		return err
 	}
 	return nil

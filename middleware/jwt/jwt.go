@@ -21,6 +21,8 @@ func JWT() gin.HandlerFunc {
 				"msg":  e.GetMsg(e.ERROR_AUTH_CHECK_TOKEN_FAIL),
 				"data": data,
 			})
+			c.Abort()
+			return
 		}
 
 		if token == "" {
